@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R026772 — Ottawa Compensation Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{
+  --navy:#0A1929;--navy2:#132F4C;
+  --amber:#E8A020;--amberL:#FFCB47;--amberP:#FFF8E7;
+  --red:#C62828;--redP:#FFEBEE;
+  --green:#2E7D32;--greenP:#E8F5E9;
+  --blue:#0069C0;--blueP:#EBF5FF;
+  --g100:#F5F5F5;--g200:#EEEEEE;--g300:#E0E0E0;--g500:#9E9E9E;
+  --white:#FFFFFF;--text:#1A2535;--text2:#3D4F61;--text3:#64748B;
+  --teal:#00897B;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
+
+/* HEADER */
+.hdr{background:var(--navy);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:16px 32px 14px;flex-wrap:wrap;gap:10px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.logo{width:34px;height:34px;background:var(--amber);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);font-weight:700;flex-shrink:0;}
+.bn{font-size:13px;font-weight:600;color:#fff;}
+.bs{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.07em;text-transform:uppercase;margin-top:1px;}
+.hdr-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.pill{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:4px 11px;font-size:11px;color:rgba(255,255,255,.5);}
+.pill b{color:var(--amberL);}
+.hdr-q{padding:14px 32px 18px;border-top:1px solid rgba(255,255,255,.07);}
+.hdr-q-eye{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:5px;}
+.hdr-q-title{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;line-height:1.3;}
+.hdr-q-title em{color:var(--amberL);font-style:italic;}
+.hdr-q-note{font-size:11px;color:rgba(255,255,255,.38);margin-top:5px;}
+
+/* ALERT */
+.alert{background:#7B1C1C;padding:9px 32px;display:flex;align-items:center;gap:9px;border-top:2px solid #E53935;}
+.alert-dot{width:17px;height:17px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;flex-shrink:0;}
+.alert-txt{font-size:12px;color:rgba(255,255,255,.9);line-height:1.5;}
+.alert-txt strong{color:#FFAB91;}
+
+/* TABS */
+.tabs{background:var(--navy2);padding:0 32px;display:flex;border-top:1px solid rgba(255,255,255,.06);}
+.tab{padding:12px 18px;font-size:12px;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .18s;font-family:'Sora',sans-serif;white-space:nowrap;}
+.tab:hover{color:rgba(255,255,255,.7);}
+.tab.on{color:var(--amberL);border-bottom-color:var(--amber);}
+
+/* MAIN */
+.main{padding:24px 32px 48px;max-width:1300px;}
+.pane{display:none;}
+.pane.on{display:block;}
+.slabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.slabel::after{content:'';flex:1;height:1px;background:var(--g300);}
+
+/* RANGE VISUAL — fixed, no overlapping */
+.range-block{background:var(--white);border:1px solid var(--g200);border-radius:10px;padding:20px 24px;margin-bottom:18px;}
+.range-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+.range-row{display:flex;align-items:stretch;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--g200);}
+.range-seg{flex:1;padding:14px 16px;text-align:center;}
+.range-seg.lo{background:#E8F5E9;}
+.range-seg.mid{background:var(--amberP);border-left:1px solid var(--g200);border-right:1px solid var(--g200);}
+.range-seg.hi{background:#EBF5FF;}
+.range-seg-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.range-seg.lo .range-seg-lbl{color:var(--green);}
+.range-seg.mid .range-seg-lbl{color:#8B5800;}
+.range-seg.hi .range-seg-lbl{color:var(--blue);}
+.range-seg-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;line-height:1;margin-bottom:4px;}
+.range-seg.lo .range-seg-val{color:var(--green);}
+.range-seg.mid .range-seg-val{color:#8B5800;}
+.range-seg.hi .range-seg-val{color:var(--blue);}
+.range-seg-note{font-size:11px;color:var(--text3);line-height:1.4;}
+
+/* ANSWER BLOCK */
+.answer{background:var(--white);border-radius:10px;border:1px solid var(--g200);margin-bottom:18px;overflow:hidden;}
+.answer-hdr{background:var(--navy);padding:12px 20px;font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:9px;}
+.answer-hdr span{background:var(--amber);color:var(--navy);width:21px;height:21px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.answer-cols{display:grid;grid-template-columns:repeat(3,1fr);}
+.a-div{width:1px;background:var(--g200);}
+.ac{padding:18px 20px;}
+.ac-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);font-weight:600;margin-bottom:6px;}
+.ac-val{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;line-height:1;margin-bottom:6px;}
+.ac-val.red{color:var(--red);}
+.ac-val.amber{color:#8B5800;}
+.ac-val.green{color:var(--green);}
+.ac-note{font-size:12px;color:var(--text2);line-height:1.65;}
+.ac-note strong{color:var(--text);}
+
+/* TWO COL */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.two-wide{grid-template-columns:1.4fr 1fr;}
+
+/* CARD */
+.card{background:var(--white);border-radius:10px;border:1px solid var(--g200);overflow:hidden;}
+.ch{padding:13px 18px 11px;border-bottom:1px solid var(--g100);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.ct{font-size:12.5px;font-weight:600;color:var(--text);}
+.cs{font-size:11px;color:var(--text3);margin-top:2px;}
+.cb{padding:16px 18px;}
+.badge{font-size:10px;background:var(--g100);border:1px solid var(--g200);border-radius:4px;padding:2px 8px;color:var(--text3);white-space:nowrap;flex-shrink:0;}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.stat{background:var(--white);border-radius:9px;border:1px solid var(--g200);padding:16px 18px;border-top:3px solid transparent;}
+.stat.red{border-top-color:var(--red);}
+.stat.amber{border-top-color:var(--amber);}
+.stat.green{border-top-color:var(--green);}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:600;margin-bottom:7px;}
+.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--text);line-height:1;margin-bottom:5px;}
+.stat-note{font-size:11.5px;color:var(--text2);line-height:1.55;}
+
+/* TABLE */
+.dt{width:100%;border-collapse:collapse;font-size:12px;}
+.dt th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-weight:600;padding:8px 10px;border-bottom:1.5px solid var(--g200);text-align:left;background:#FAFAFA;}
+.dt td{padding:9px 10px;border-bottom:1px solid var(--g100);vertical-align:middle;}
+.dt tr:last-child td{border-bottom:none;}
+.dt tr.hl td{background:rgba(232,160,32,.05);}
+.dt tr:hover td{background:#FAFAFA;}
+.dt .r{text-align:right;}
+.dt .c{text-align:center;}
+.mono{font-family:'DM Mono',monospace;}
+
+.d{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;}
+.d.pos{background:var(--redP);color:var(--red);}
+.d.neg{background:var(--greenP);color:var(--green);}
+.d.zero{background:var(--g100);color:var(--text3);}
+
+/* INLINE BAR */
+.ibar{display:flex;align-items:center;gap:8px;}
+.ibar-track{flex:1;height:6px;background:var(--g100);border-radius:3px;overflow:hidden;min-width:50px;}
+.ibar-fill{height:100%;border-radius:3px;}
+
+/* MAP */
+#ottawa-map{height:420px;border-radius:8px;overflow:hidden;border:1px solid var(--g200);}
+
+/* REC */
+.rec{background:var(--navy);border-radius:10px;padding:22px 26px;margin-bottom:16px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;}
+.rec-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--amber);font-weight:600;margin-bottom:6px;}
+.rec-title{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;margin-bottom:8px;line-height:1.35;}
+.rec-body{font-size:12px;color:rgba(255,255,255,.55);line-height:1.75;}
+.rec-body strong{color:var(--amberL);}
+.rec-nums{display:flex;flex-direction:column;gap:8px;min-width:148px;}
+.rn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;text-align:center;}
+.rnl{font-size:10px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+.rnv{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--amberL);}
+
+/* CALLOUT */
+.co{border-radius:7px;padding:11px 14px;font-size:12px;line-height:1.65;}
+.co.w{background:var(--amberP);border:1px solid #F5C55A;color:#6B4100;}
+.co.bad{background:var(--redP);border:1px solid #FFCDD2;color:#7B1A1A;}
+.co.ok{background:var(--greenP);border:1px solid #C8E6C9;color:#1B5E20;}
+.co.i{background:var(--blueP);border:1px solid #BBDEFB;color:#0D47A1;}
+.mt10{margin-top:10px;}
+.mt16{margin-top:16px;}
+
+/* FOOTER */
+.footer{padding:14px 32px;border-top:1px solid var(--g200);background:var(--white);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.footer-left{font-size:11px;color:var(--text3);line-height:1.6;}
+.footer-left strong{color:var(--text);}
+.footer-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--g100);padding:4px 10px;border-radius:5px;}
+
+@media(max-width:860px){
+  .two,.two-wide,.answer-cols,.stats{grid-template-columns:1fr;}
+  .a-div{display:none;}
+  .rec{grid-template-columns:1fr;}
+  .main,.hdr-top,.hdr-q,.alert,.tabs{padding-left:16px;padding-right:16px;}
+  .hdr-pills{display:none;}
+  #ottawa-map{height:300px;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-top">
+    <div class="brand">
+      <div class="logo">C</div>
+      <div>
+        <div class="bn">Ciena — Ottawa Compensation Analysis</div>
+        <div class="bs">Revelio Labs · Glassdoor · R026772 · P3</div>
+      </div>
+    </div>
+    <div class="hdr-pills">
+      <div class="pill">Req <b>R026772</b></div>
+      <div class="pill">P3 · Ottawa, ON</div>
+      <div class="pill"><b>140 salary samples</b> analyzed</div>
+      <div class="pill">Semiconductor &amp; optical companies only</div>
+    </div>
+  </div>
+  <div class="hdr-q">
+    <div class="hdr-q-eye">Rebecca's question — R026772</div>
+    <div class="hdr-q-title">Is Ciena's pay range <em>off-market</em> for Ottawa — and if so, by how much?</div>
+    <div class="hdr-q-note">Revelio Labs (140 Ottawa salary samples, 11 companies, 4+ samples per company required) · Nokia from Glassdoor Dec 2025 · Telecom carriers excluded</div>
+  </div>
+</header>
+
+<div class="alert">
+  <div class="alert-dot">!</div>
+  <div class="alert-txt">
+    <strong>Yes — the top of Ciena's range is below market.</strong> The starting pay ($115K) is competitive. But the maximum Ciena can offer ($149,400) is below the average pay at 6 of 12 Ottawa companies in this analysis.
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="sw('overview',this)">Overview</button>
+  <button class="tab" onclick="sw('market',this)">Market Detail</button>
+  <button class="tab" onclick="sw('data',this)">Full Data</button>
+</div>
+
+<div class="main">
+
+<!-- ════ OVERVIEW ════ -->
+<div class="pane on" id="tab-overview">
+
+  <!-- CIENA RANGE — plain, no overlap -->
+  <div class="slabel">Ciena's current pay range for R026772</div>
+  <div class="range-block">
+    <div class="range-title">How Ciena's range is structured — three points</div>
+    <div class="range-row">
+      <div class="range-seg lo">
+        <div class="range-seg-lbl">Starting pay</div>
+        <div class="range-seg-val">$115,000</div>
+        <div class="range-seg-note">The lowest offer Ciena can make. Competitive in the Ottawa market.</div>
+      </div>
+      <div class="range-seg mid">
+        <div class="range-seg-lbl">Midpoint (center of range)</div>
+        <div class="range-seg-val">$132,200</div>
+        <div class="range-seg-note">Where most offers would land. Close to the Ottawa market average.</div>
+      </div>
+      <div class="range-seg hi">
+        <div class="range-seg-lbl">Maximum Ciena can offer</div>
+        <div class="range-seg-val">$149,400</div>
+        <div class="range-seg-note">The highest offer Ciena can make. This is where the gap exists — see below.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIRECT ANSWER -->
+  <div class="slabel">The direct answer</div>
+  <div class="answer">
+    <div class="answer-hdr"><span>?</span>Is Ciena's range off-market — and by how much?</div>
+    <div class="answer-cols">
+      <div class="ac">
+        <div class="ac-lbl">Is it off-market?</div>
+        <div class="ac-val amber">At the top, yes</div>
+        <div class="ac-note">The starting pay ($115K) and midpoint ($132K) are in line with Ottawa's market average of $131,175. The issue is the <strong>maximum ($149,400) — it is below what 6 of 12 Ottawa companies pay their people on average.</strong></div>
+      </div>
+      <div class="a-div"></div>
+      <div class="ac">
+        <div class="ac-lbl">By how much?</div>
+        <div class="ac-val red">Up to $59,700</div>
+        <div class="ac-note">Intel's Ottawa average is $209,089 — $59,700 above Ciena's maximum. More relevantly, Synopsys (54 salary samples analyzed) pays an Ottawa average of $139,620 — meaning Ciena's maximum of $149,400 is only a <strong>7% raise for someone leaving Synopsys. That is typically not enough to change jobs.</strong></div>
+      </div>
+      <div class="a-div"></div>
+      <div class="ac">
+        <div class="ac-lbl">Who can Ciena not match?</div>
+        <div class="ac-val red">6 of 12 companies</div>
+        <div class="ac-note">Intel, Nokia, Infineon, Marvell, Synopsys, and ElectroPotonic all pay more on average than Ciena's maximum. Someone at any of these companies would be <strong>taking a pay cut</strong> to join Ciena — even at the top of the range.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART + MAP -->
+  <div class="slabel">Ottawa pay by company — and where they are</div>
+  <div class="two two-wide">
+
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div class="ct">Average pay per company vs Ciena's range</div>
+          <div class="cs">Amber band = Ciena's full range · dashed line = Ciena midpoint ($132K)</div>
+        </div>
+        <div class="badge">Revelio Labs + Glassdoor ★</div>
+      </div>
+      <div class="cb">
+        <div style="position:relative;width:100%;height:320px"><canvas id="mainChart"></canvas></div>
+        <div style="display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--text3);flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#C62828;border-radius:2px;display:inline-block"></span>Above Ciena's maximum — Ciena cannot match</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#1890FF;border-radius:2px;display:inline-block"></span>Above Ciena's midpoint</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:#2E7D32;border-radius:2px;display:inline-block"></span>Below Ciena's midpoint — Ciena is competitive here</span>
+        </div>
+        <div class="co i mt10">★ Nokia avg from Glassdoor Dec 2025 (9 Ottawa salary submissions). All others: Revelio Labs, minimum 4 salary samples per company.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div class="ct">Ottawa's tech companies — Kanata corridor</div>
+          <div class="cs">Hover over each pin to see average pay · All draw from the same local engineering community as Ciena</div>
+        </div>
+      </div>
+      <div class="cb" style="padding:12px;">
+        <div id="ottawa-map"></div>
+        <div class="co w mt10">All these companies — including Ciena — are within a few kilometres of each other in Kanata. This is one shared labour market.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RECOMMENDATION -->
+  <div class="rec">
+    <div>
+      <div class="rec-lbl">Recommendation</div>
+      <div class="rec-title">Raise the maximum — the starting pay can stay</div>
+      <div class="rec-body">
+        The starting pay of $115,000 is reasonable and does not need to change. The problem is the <strong>maximum of $149,400</strong> — it is below the average pay at 6 Ottawa competitors, which limits who Ciena can make a competitive offer to. Raising the maximum to <strong>$168K–$175K</strong> would put Ciena above all Ottawa companies in this dataset except Intel — and make competitive offers possible for experienced candidates from Synopsys, Marvell, and Infineon. If a range change is not approved, a <strong>one-time signing bonus of $15K–$25K</strong> can bridge the gap for specific candidates above the current maximum.
+      </div>
+    </div>
+    <div class="rec-nums">
+      <div class="rn"><div class="rnl">Suggested new maximum</div><div class="rnv">$168–175K</div></div>
+      <div class="rn"><div class="rnl">New midpoint</div><div class="rnv">~$146K</div></div>
+      <div class="rn"><div class="rnl">Or: signing bonus</div><div class="rnv">$15–25K</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════ MARKET DETAIL ════ -->
+<div class="pane" id="tab-market">
+
+  <div class="stats">
+    <div class="stat red">
+      <div class="stat-lbl">Companies where Ciena cannot make a competitive offer</div>
+      <div class="stat-val">6 of 12</div>
+      <div class="stat-note">Intel, Nokia, Infineon, Marvell, Synopsys, ElectroPotonic — each pays more on average than Ciena's maximum of $149,400</div>
+    </div>
+    <div class="stat amber">
+      <div class="stat-lbl">Ottawa market weighted average pay</div>
+      <div class="stat-val">$131,175</div>
+      <div class="stat-note">Across 140 salary samples in 11 Revelio companies. Ciena's midpoint ($132,200) is just above this — the midpoint is roughly on-market.</div>
+    </div>
+    <div class="stat green">
+      <div class="stat-lbl">Companies where Ciena's offer is a pay raise</div>
+      <div class="stat-val">5 of 12</div>
+      <div class="stat-note">Alphawave ($114K), NXP ($102K), Microchip ($86K), QUALCOMM ($83K), Telesat ($79K) — Ciena's starting pay is above these averages</div>
+    </div>
+  </div>
+
+  <div class="two">
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div class="ct">Base pay vs total pay (including bonus) — Ottawa</div>
+          <div class="cs">Companies with 4+ salary samples only</div>
+        </div>
+      </div>
+      <div class="cb">
+        <div style="position:relative;width:100%;height:280px"><canvas id="premChart"></canvas></div>
+        <div class="co w mt10">When bonuses and equity are included, the gap widens further. Intel's total pay averages $301K. Marvell reaches $196K. Candidates will compare total packages — not base only.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div class="ct">How each company's average pay compares to Ciena</div>
+          <div class="cs">Ottawa salary samples only · vs Ciena midpoint ($132,200)</div>
+        </div>
+      </div>
+      <div class="cb" style="padding:0;overflow-x:auto;">
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th class="c">Samples analyzed</th>
+              <th class="r">Avg base pay</th>
+              <th class="r">Avg total pay</th>
+              <th class="c">vs Ciena midpoint</th>
+            </tr>
+          </thead>
+          <tbody id="mkt-tbody"></tbody>
+        </table>
+        <div style="padding:10px 12px;">
+          <div class="co i">★ Nokia: Glassdoor Dec 2025. All others: Revelio Labs. Minimum 4 salary samples per company required for inclusion.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="co i mt16">
+    <strong>Note on Ciena's total pay:</strong> Levels.fyi (Nov 2025) shows Ciena's P3 total pay median in Ottawa is approximately CA$155,060, including bonus and equity. If this is not explained clearly during recruiting, candidates comparing base salaries alone may assume Ciena is underpaying.
+  </div>
+
+</div>
+
+<!-- ════ FULL DATA ════ -->
+<div class="pane" id="tab-data">
+
+  <div class="co i" style="margin-bottom:16px;">
+    Only verified data is shown here. <strong>Revelio Labs</strong>: companies with a minimum of 4 Ottawa salary samples in the dataset. <strong>Nokia</strong>: Glassdoor Dec 2025, 9 Ottawa salary submissions. No estimated or inferred figures are included.
+  </div>
+
+  <div class="card">
+    <div class="ch">
+      <div>
+        <div class="ct">All Ottawa salary data — R026772 market context</div>
+        <div class="cs">Semiconductor &amp; optical companies · sorted by average base pay · Telesat included as optical/satellite context</div>
+      </div>
+    </div>
+    <div class="cb" style="padding:0;overflow-x:auto;">
+      <table class="dt">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Company</th>
+            <th class="c">Samples analyzed</th>
+            <th class="r">Avg base pay</th>
+            <th class="r">Avg total pay</th>
+            <th class="r">Bonus on top</th>
+            <th>Bar</th>
+            <th class="c">vs Ciena midpoint</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="full-tbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid var(--g100);">
+      <div class="co w">
+        Ciena's range for R026772: <strong>Starting pay $115,000 → Midpoint $132,200 → Maximum $149,400</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div><!-- main -->
+
+<div class="footer">
+  <div class="footer-left">
+    <strong>Revelio Labs</strong>: 140 Ottawa salary samples, 11 semiconductor &amp; optical companies (minimum 4 samples per company) ·
+    <strong>Glassdoor</strong>: Nokia Ottawa, Dec 2025 ·
+    <strong>Levels.fyi</strong>: Ciena P3 Ottawa total comp, Nov 2025 · Telecom carriers excluded
+  </div>
+  <div class="footer-badge">R026772 · P3 · Ottawa · March 2026</div>
+</div>
+
+<script>
+const DATA = [
+  { name:'Intel',          n:4,   base:209089, total:301488, ext:false },
+  { name:'Nokia',          n:9,   base:139746, total:188000, ext:true  },
+  { name:'Infineon',       n:4,   base:147116, total:197702, ext:false },
+  { name:'Marvell',        n:23,  base:143254, total:196254, ext:false },
+  { name:'Synopsys',       n:54,  base:139620, total:168091, ext:false },
+  { name:'ElectroPotonic', n:4,   base:134738, total:176074, ext:false },
+  { name:'AMD',            n:14,  base:133568, total:163273, ext:false },
+  { name:'Alphawave IP',   n:18,  base:113978, total:143090, ext:false },
+  { name:'NXP Semi',       n:4,   base:101587, total:117164, ext:false },
+  { name:'Microchip',      n:5,   base:85566,  total:100551, ext:false },
+  { name:'QUALCOMM',       n:4,   base:83452,  total:94279,  ext:false },
+  { name:'Telesat',        n:6,   base:79471,  total:94517,  ext:false },
+];
+
+const CM=132200, CF=115000, CC=149400;
+const fmt=v=>'$'+Math.round(v).toLocaleString();
+const fmtK=v=>'$'+Math.round(v/1000)+'K';
+function col(v){return v>CC?'#C62828':v>CM?'#1890FF':'#2E7D32';}
+
+function sw(id,btn){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+Chart.defaults.font.family="'Sora',sans-serif";
+Chart.defaults.color='#64748B';
+Chart.defaults.plugins.legend.display=false;
+const grd={color:'#EEEEEE'};
+const mT={font:{family:'DM Mono',size:11},color:'#64748B'};
+const sT={font:{size:11},color:'#64748B'};
+
+function rangePlugin(){
+  return {id:'rp',beforeDraw(c){
+    const {ctx,chartArea:ca,scales:{y}}=c;
+    if(!ca||!y) return;
+    const yF=y.getPixelForValue(CF),yC=y.getPixelForValue(CC),yM=y.getPixelForValue(CM);
+    ctx.save();
+    ctx.fillStyle='rgba(232,160,32,.09)';
+    ctx.fillRect(ca.left,yC,ca.right-ca.left,yF-yC);
+    ctx.strokeStyle='#8B5800';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(ca.left,yM);ctx.lineTo(ca.right,yM);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#8B5800';ctx.font='10px Sora';
+    ctx.fillText('Ciena midpoint $132K',ca.right-114,yM-4);
+    ctx.restore();
+  }};
+}
+
+// Main chart
+(function(){
+  const s=[...DATA].sort((a,b)=>b.base-a.base);
+  new Chart(document.getElementById('mainChart'),{
+    type:'bar',
+    data:{
+      labels:s.map(c=>c.name+(c.ext?' ★':'')),
+      datasets:[{data:s.map(c=>c.base),backgroundColor:s.map(c=>col(c.base)),borderRadius:4,borderSkipped:false}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{
+        const c=s[ctx.dataIndex];
+        return ' '+fmt(ctx.parsed.y)+' avg pay'+(c.ext?' (Glassdoor)':'');
+      }}}},
+      scales:{
+        y:{min:60000,ticks:{...mT,callback:fmtK},grid:grd,border:{display:false}},
+        x:{ticks:{...sT,font:{size:10}},grid:{display:false},border:{display:false}}
+      }
+    },
+    plugins:[rangePlugin()]
+  });
+})();
+
+// Premium chart
+(function(){
+  const s=[...DATA].sort((a,b)=>b.base-a.base);
+  new Chart(document.getElementById('premChart'),{
+    type:'bar',
+    data:{
+      labels:s.map(c=>c.name+(c.ext?' ★':'')),
+      datasets:[
+        {label:'Base pay',data:s.map(c=>c.base),backgroundColor:'rgba(30,100,181,.7)',borderRadius:3},
+        {label:'Total pay incl. bonus',data:s.map(c=>c.total),backgroundColor:'rgba(0,137,123,.5)',borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:11},usePointStyle:true,pointStyle:'rect',boxWidth:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fmt(ctx.parsed.y)}}},
+      scales:{
+        y:{min:60000,ticks:{...mT,callback:fmtK},grid:grd,border:{display:false}},
+        x:{ticks:{...sT,font:{size:10}},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+})();
+
+// Market table
+(function(){
+  const s=[...DATA].sort((a,b)=>b.base-a.base);
+  document.getElementById('mkt-tbody').innerHTML=s.map(c=>{
+    const delta=Math.round((c.base-CM)/CM*100);
+    const dc=delta>4?'pos':delta<-4?'neg':'zero';
+    const dl=(delta>0?'+':'')+delta+'%';
+    const ext=c.ext?` <span style="font-size:9px;color:var(--g500)">★</span>`:'';
+    return `<tr><td><strong>${c.name}</strong>${ext}</td><td class="c">${c.n}</td><td class="r mono">${fmt(c.base)}</td><td class="r mono">${fmt(c.total)}</td><td class="c"><span class="d ${dc}">${dl}</span></td></tr>`;
+  }).join('')+
+  `<tr class="hl"><td><strong>Ciena — midpoint</strong></td><td class="c">—</td><td class="r mono"><strong>${fmt(CM)}</strong></td><td class="r" style="color:var(--g500);font-size:11px">posted range only</td><td class="c"><span class="d zero">Benchmark</span></td></tr>`;
+})();
+
+// Full table
+(function(){
+  const s=[...DATA].sort((a,b)=>b.base-a.base);
+  const mx=Math.max(...s.map(c=>c.base));
+  document.getElementById('full-tbody').innerHTML=s.map((c,i)=>{
+    const delta=Math.round((c.base-CM)/CM*100);
+    const dc=delta>4?'pos':delta<-4?'neg':'zero';
+    const dl=(delta>0?'+':'')+delta+'%';
+    const prem=Math.round((c.total-c.base)/c.base*100);
+    const bp=Math.round(c.base/mx*100);
+    const bc=col(c.base);
+    const src=c.ext?'Glassdoor Dec 2025':'Revelio Labs';
+    return `<tr>
+      <td style="color:var(--g500);font-size:10px">${i+1}</td>
+      <td><strong>${c.name}</strong>${c.ext?` <span style="font-size:9px;color:var(--g500)">★</span>`:''}</td>
+      <td class="c">${c.n}</td>
+      <td class="r mono">${fmt(c.base)}</td>
+      <td class="r mono">${fmt(c.total)}</td>
+      <td class="r" style="color:var(--teal);font-weight:500">+${prem}%</td>
+      <td style="min-width:80px"><div class="ibar"><div class="ibar-track"><div class="ibar-fill" style="width:${bp}%;background:${bc}"></div></div></div></td>
+      <td class="c"><span class="d ${dc}">${dl}</span></td>
+      <td style="font-size:10px;color:var(--text3)">${src}</td>
+    </tr>`;
+  }).join('');
+})();
+
+// MAP
+(function(){
+  const map=L.map('ottawa-map',{zoomControl:true,scrollWheelZoom:false}).setView([45.335,-75.925],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap contributors',maxZoom:18
+  }).addTo(map);
+
+  const locs=[
+    {name:'Ciena',          lat:45.3284,lng:-75.9183,ciena:true, pay:null},
+    {name:'Nokia',          lat:45.3302,lng:-75.9124,above:true, pay:139746},
+    {name:'Marvell',        lat:45.3320,lng:-75.9001,above:true, pay:143254},
+    {name:'Synopsys',       lat:45.3265,lng:-75.8920,above:true, pay:139620},
+    {name:'Intel',          lat:45.3250,lng:-75.9080,above:true, pay:209089},
+    {name:'AMD',            lat:45.3340,lng:-75.9200,above:false,pay:133568},
+    {name:'Alphawave IP',   lat:45.3180,lng:-75.8950,above:false,pay:113978},
+    {name:'Infineon',       lat:45.3360,lng:-75.9060,above:true, pay:147116},
+    {name:'Microchip',      lat:45.3290,lng:-75.9350,above:false,pay:85566},
+    {name:'QUALCOMM',       lat:45.3350,lng:-75.9280,above:false,pay:83452},
+    {name:'NXP Semi',       lat:45.3230,lng:-75.9150,above:false,pay:101587},
+    {name:'ElectroPotonic', lat:45.3270,lng:-75.8870,above:true, pay:134738},
+    {name:'Telesat',        lat:45.3930,lng:-75.6820,above:false,pay:79471},
+  ];
+
+  locs.forEach(p=>{
+    const color=p.ciena?'#E8A020':p.above?'#C62828':'#2E7D32';
+    const r=p.ciena?11:8;
+    const circ=L.circleMarker([p.lat,p.lng],{radius:r,color:'white',weight:2,fillColor:color,fillOpacity:0.9}).addTo(map);
+    const payStr=p.pay
+      ?`<br><span style="font-family:monospace;font-size:12px">Avg pay: ${fmt(p.pay)}</span>`
+      :`<br><span style="font-size:11px;color:#666">Range: $115K – $149K</span>`;
+    circ.bindTooltip(`<strong>${p.name}</strong>${payStr}`,{direction:'top',offset:[0,-4]});
+  });
+
+  const legend=L.control({position:'bottomright'});
+  legend.onAdd=function(){
+    const d=L.DomUtil.create('div');
+    d.style.cssText='background:white;padding:8px 12px;border-radius:6px;font-size:11px;font-family:Sora,sans-serif;border:1px solid #ddd;line-height:2;box-shadow:0 1px 4px rgba(0,0,0,.15)';
+    d.innerHTML=`<div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#C62828;border-radius:50%;display:inline-block;flex-shrink:0"></span>Pays above Ciena's maximum</div><div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#2E7D32;border-radius:50%;display:inline-block;flex-shrink:0"></span>Pays below Ciena's midpoint</div><div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#E8A020;border-radius:50%;display:inline-block;flex-shrink:0"></span>Ciena (this role)</div>`;
+    return d;
+  };
+  legend.addTo(map);
+})();
+</script>
+</body>
+</html>
