@@ -191,7 +191,7 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
     </div>
   </div>
   <div class="hdr-q">
-    <div class="hdr-q-eye">Business question — R026772</div>
+    <div class="hdr-q-eye">Rebecca's question — R026772</div>
     <div class="hdr-q-title">Is Ciena's pay range <em>off-market</em> for Ottawa — and if so, by how much?</div>
     <div class="hdr-q-note">Revelio Labs (140 Ottawa salary samples, 11 companies, 4+ samples per company required) · Nokia from Glassdoor Dec 2025 · Telecom carriers excluded</div>
   </div>
@@ -222,7 +222,7 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
       Why these 12 companies were selected for this analysis
     </div>
     <div style="font-size:12px;color:#1565C0;line-height:1.7;">
-      This analysis includes only <strong>semiconductor and optical networking companies with an Ottawa office</strong> — the same labour market Ciena draws from for R026772. All 12 companies design or manufacture hardware that requires expertise in the same technical areas this role needs (optical modules, high-speed electrical design, DSP, or embedded systems). Telecom service providers such as TELUS and Rogers were excluded because they hire for different roles and do not compete for the same engineering profiles. Only companies with <strong>4 or more Ottawa salary samples</strong> in the Revelio Labs dataset were included to ensure the averages are reliable, not based on one or two data points. Nokia (9 samples, Glassdoor Dec 2025) was added because it is Ciena's most direct Ottawa competitor — both companies make optical networking equipment and recruit from the same community.
+      This analysis includes only <strong>semiconductor and optical networking companies with an Ottawa office</strong> — the same labour market Ciena draws from for R026772. All 12 companies design or manufacture hardware that requires expertise in the same technical areas this role needs (optical modules, high-speed electrical design, DSP, or embedded systems). Telecom service providers such as TELUS and Rogers were excluded because they hire for different roles and do not compete for the same engineering profiles. Only companies with <strong>4 or more Ottawa salary samples</strong> in the Revelio Labs dataset were included to ensure the averages are reliable, not based on one or two data points. Nokia (9 samples, Glassdoor Dec 2025) was added because it is Ciena's most direct Ottawa competitor. <strong>ARM was reviewed but had no Ottawa-specific salary data in Revelio</strong> — their professionals in this dataset are based in Toronto and Austin, not Ottawa. <strong>Credo Semiconductor</strong> had only 2 Ottawa samples, below the 4-sample minimum required for inclusion.
     </div>
   </div>
 
@@ -269,7 +269,7 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
       <div class="ac">
         <div class="ac-lbl">Who can Ciena not match?</div>
         <div class="ac-val red">6 of 12 companies</div>
-        <div class="ac-note">Intel, Nokia, Infineon, Marvell, Synopsys, and ElectroPotonic all pay more on average than Ciena's maximum. Someone at any of these companies would be <strong>taking a pay cut</strong> to join Ciena — even at the top of the range.</div>
+        <div class="ac-note">Intel, Nokia, Infineon, Marvell, Synopsys, and Cadence all pay more on average than Ciena's maximum. Someone at any of these companies would be <strong>taking a pay cut</strong> to join Ciena — even at the top of the range.</div>
       </div>
     </div>
   </div>
@@ -337,7 +337,7 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
     <div class="stat red">
       <div class="stat-lbl">Companies where Ciena cannot make a competitive offer</div>
       <div class="stat-val">6 of 12</div>
-      <div class="stat-note">Intel, Nokia, Infineon, Marvell, Synopsys, ElectroPotonic — each pays more on average than Ciena's maximum of $149,400</div>
+      <div class="stat-note">Intel, Nokia, Infineon, Marvell, Synopsys, Cadence — each pays more on average than Ciena's maximum of $149,400</div>
     </div>
     <div class="stat amber">
       <div class="stat-lbl">Ottawa market weighted average pay</div>
@@ -458,7 +458,7 @@ const DATA = [
   { name:'Infineon',       n:4,   base:147116, total:197702, ext:false, industry:'Semiconductor (power, automotive, IoT)' },
   { name:'Marvell',        n:23,  base:143254, total:196254, ext:false, industry:'Semiconductor (cloud, storage, networking silicon)' },
   { name:'Synopsys',       n:54,  base:139620, total:168091, ext:false, industry:'Semiconductor IP / EDA software' },
-  { name:'ElectroPotonic', n:4,   base:134738, total:176074, ext:false, industry:'Optical semiconductor design' },
+  { name:'Cadence Design',  n:12,  base:133118, total:203440, ext:false, industry:'Semiconductor EDA software & IP — chip design tools used in optical & analog design' },
   { name:'AMD',            n:14,  base:133568, total:163273, ext:false, industry:'Semiconductor (GPU, CPU, adaptive computing)' },
   { name:'Alphawave IP',   n:18,  base:113978, total:143090, ext:false, industry:'Semiconductor IP (SerDes, high-speed interconnect)' },
   { name:'NXP Semi',       n:4,   base:101587, total:117164, ext:false, industry:'Semiconductor (automotive, industrial, IoT)' },
@@ -615,8 +615,8 @@ function rangePlugin(){
     {name:'Infineon\nKanata North',        lat:45.3512,lng:-75.9108,above:true, pay:147116},
     // Intel: Kanata office — Solandt Road area
     {name:'Intel\nSolandt Rd, Kanata',     lat:45.3470,lng:-75.9190,above:true, pay:209089},
-    // ElectroPotonic: Kanata North
-    {name:'ElectroPotonic\nKanata North',  lat:45.3530,lng:-75.9165,above:true, pay:134738},
+    // Cadence Design Systems: Kanata North area (March Road corridor)
+    {name:'Cadence Design\n301 Legget Dr, Kanata', lat:45.3520,lng:-75.9160,above:false,pay:133118},
     // NXP Semi: Kanata North
     {name:'NXP Semi\nKanata North',        lat:45.3518,lng:-75.9155,above:false,pay:101587},
     // Microchip: Kanata North
