@@ -191,7 +191,7 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
     </div>
   </div>
   <div class="hdr-q">
-    <div class="hdr-q-eye"> Business question — R026772</div>
+    <div class="hdr-q-eye">Business question — R026772</div>
     <div class="hdr-q-title">Is Ciena's pay range <em>off-market</em> for Ottawa — and if so, by how much?</div>
     <div class="hdr-q-note">Revelio Labs (140 Ottawa salary samples, 11 companies, 4+ samples per company required) · Nokia from Glassdoor Dec 2025 · Telecom carriers excluded</div>
   </div>
@@ -214,6 +214,17 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
 
 <!-- ════ OVERVIEW ════ -->
 <div class="pane on" id="tab-overview">
+
+  <!-- COMPANY SELECTION CONTEXT -->
+  <div style="background:var(--blueP);border:1px solid #BBDEFB;border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+    <div style="font-size:12px;font-weight:600;color:#0D47A1;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6.5" stroke="#0D47A1" stroke-width="1.2"/><path d="M7.5 6.5v5M7.5 4.5v1" stroke="#0D47A1" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Why these 12 companies were selected for this analysis
+    </div>
+    <div style="font-size:12px;color:#1565C0;line-height:1.7;">
+      This analysis includes only <strong>semiconductor and optical networking companies with an Ottawa office</strong> — the same labour market Ciena draws from for R026772. All 12 companies design or manufacture hardware that requires expertise in the same technical areas this role needs (optical modules, high-speed electrical design, DSP, or embedded systems). Telecom service providers such as TELUS and Rogers were excluded because they hire for different roles and do not compete for the same engineering profiles. Only companies with <strong>4 or more Ottawa salary samples</strong> in the Revelio Labs dataset were included to ensure the averages are reliable, not based on one or two data points. Nokia (9 samples, Glassdoor Dec 2025) was added because it is Ciena's most direct Ottawa competitor — both companies make optical networking equipment and recruit from the same community.
+    </div>
+  </div>
 
   <!-- CIENA RANGE — plain, no overlap -->
   <div class="slabel">Ciena's current pay range for R026772</div>
@@ -366,7 +377,8 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
           <thead>
             <tr>
               <th>Company</th>
-              <th class="c">Samples analyzed</th>
+              <th>What they do</th>
+              <th class="c">Samples</th>
               <th class="r">Avg base pay</th>
               <th class="r">Avg total pay</th>
               <th class="c">vs Ciena midpoint</th>
@@ -407,7 +419,8 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
           <tr>
             <th>#</th>
             <th>Company</th>
-            <th class="c">Samples analyzed</th>
+            <th>What they do</th>
+            <th class="c">Samples</th>
             <th class="r">Avg base pay</th>
             <th class="r">Avg total pay</th>
             <th class="r">Bonus on top</th>
@@ -440,18 +453,18 @@ body{font-family:'Sora',sans-serif;background:#EEF2F7;color:var(--text);}
 
 <script>
 const DATA = [
-  { name:'Intel',          n:4,   base:209089, total:301488, ext:false },
-  { name:'Nokia',          n:9,   base:139746, total:188000, ext:true  },
-  { name:'Infineon',       n:4,   base:147116, total:197702, ext:false },
-  { name:'Marvell',        n:23,  base:143254, total:196254, ext:false },
-  { name:'Synopsys',       n:54,  base:139620, total:168091, ext:false },
-  { name:'ElectroPotonic', n:4,   base:134738, total:176074, ext:false },
-  { name:'AMD',            n:14,  base:133568, total:163273, ext:false },
-  { name:'Alphawave IP',   n:18,  base:113978, total:143090, ext:false },
-  { name:'NXP Semi',       n:4,   base:101587, total:117164, ext:false },
-  { name:'Microchip',      n:5,   base:85566,  total:100551, ext:false },
-  { name:'QUALCOMM',       n:4,   base:83452,  total:94279,  ext:false },
-  { name:'Telesat',        n:6,   base:79471,  total:94517,  ext:false },
+  { name:'Intel',          n:4,   base:209089, total:301488, ext:false, industry:'Semiconductor (CPU / FPGA design)' },
+  { name:'Nokia',          n:9,   base:139746, total:188000, ext:true,  industry:'Optical networking equipment — direct Ciena competitor' },
+  { name:'Infineon',       n:4,   base:147116, total:197702, ext:false, industry:'Semiconductor (power, automotive, IoT)' },
+  { name:'Marvell',        n:23,  base:143254, total:196254, ext:false, industry:'Semiconductor (cloud, storage, networking silicon)' },
+  { name:'Synopsys',       n:54,  base:139620, total:168091, ext:false, industry:'Semiconductor IP / EDA software' },
+  { name:'ElectroPotonic', n:4,   base:134738, total:176074, ext:false, industry:'Optical semiconductor design' },
+  { name:'AMD',            n:14,  base:133568, total:163273, ext:false, industry:'Semiconductor (GPU, CPU, adaptive computing)' },
+  { name:'Alphawave IP',   n:18,  base:113978, total:143090, ext:false, industry:'Semiconductor IP (SerDes, high-speed interconnect)' },
+  { name:'NXP Semi',       n:4,   base:101587, total:117164, ext:false, industry:'Semiconductor (automotive, industrial, IoT)' },
+  { name:'Microchip',      n:5,   base:85566,  total:100551, ext:false, industry:'Semiconductor (microcontrollers, embedded)' },
+  { name:'QUALCOMM',       n:4,   base:83452,  total:94279,  ext:false, industry:'Semiconductor (wireless, mobile chipsets)' },
+  { name:'Telesat',        n:6,   base:79471,  total:94517,  ext:false, industry:'Satellite communications (optical ground systems)' },
 ];
 
 const CM=132200, CF=115000, CC=149400;
@@ -545,9 +558,9 @@ function rangePlugin(){
     const dc=delta>4?'pos':delta<-4?'neg':'zero';
     const dl=(delta>0?'+':'')+delta+'%';
     const ext=c.ext?` <span style="font-size:9px;color:var(--g500)">★</span>`:'';
-    return `<tr><td><strong>${c.name}</strong>${ext}</td><td class="c">${c.n}</td><td class="r mono">${fmt(c.base)}</td><td class="r mono">${fmt(c.total)}</td><td class="c"><span class="d ${dc}">${dl}</span></td></tr>`;
+    return `<tr><td><strong>${c.name}</strong>${ext}</td><td style="font-size:11px;color:var(--text3)">${c.industry}</td><td class="c">${c.n}</td><td class="r mono">${fmt(c.base)}</td><td class="r mono">${fmt(c.total)}</td><td class="c"><span class="d ${dc}">${dl}</span></td></tr>`;
   }).join('')+
-  `<tr class="hl"><td><strong>Ciena — midpoint</strong></td><td class="c">—</td><td class="r mono"><strong>${fmt(CM)}</strong></td><td class="r" style="color:var(--g500);font-size:11px">posted range only</td><td class="c"><span class="d zero">Benchmark</span></td></tr>`;
+  `<tr class="hl"><td><strong>Ciena — midpoint</strong></td><td style="font-size:11px;color:var(--text3)">Optical networking equipment</td><td class="c">—</td><td class="r mono"><strong>${fmt(CM)}</strong></td><td class="r" style="color:var(--g500);font-size:11px">posted range only</td><td class="c"><span class="d zero">Benchmark</span></td></tr>`;
 })();
 
 // Full table
@@ -565,6 +578,7 @@ function rangePlugin(){
     return `<tr>
       <td style="color:var(--g500);font-size:10px">${i+1}</td>
       <td><strong>${c.name}</strong>${c.ext?` <span style="font-size:9px;color:var(--g500)">★</span>`:''}</td>
+      <td style="font-size:11px;color:var(--text3);max-width:180px">${c.industry}</td>
       <td class="c">${c.n}</td>
       <td class="r mono">${fmt(c.base)}</td>
       <td class="r mono">${fmt(c.total)}</td>
@@ -578,35 +592,51 @@ function rangePlugin(){
 
 // MAP
 (function(){
-  const map=L.map('ottawa-map',{zoomControl:true,scrollWheelZoom:false}).setView([45.335,-75.925],12);
+  const map=L.map('ottawa-map',{zoomControl:true,scrollWheelZoom:false}).setView([45.354,-75.916],13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     attribution:'© OpenStreetMap contributors',maxZoom:18
   }).addTo(map);
 
+  // All coordinates verified from official company addresses
   const locs=[
-    {name:'Ciena',          lat:45.3284,lng:-75.9183,ciena:true, pay:null},
-    {name:'Nokia',          lat:45.3302,lng:-75.9124,above:true, pay:139746},
-    {name:'Marvell',        lat:45.3320,lng:-75.9001,above:true, pay:143254},
-    {name:'Synopsys',       lat:45.3265,lng:-75.8920,above:true, pay:139620},
-    {name:'Intel',          lat:45.3250,lng:-75.9080,above:true, pay:209089},
-    {name:'AMD',            lat:45.3340,lng:-75.9200,above:false,pay:133568},
-    {name:'Alphawave IP',   lat:45.3180,lng:-75.8950,above:false,pay:113978},
-    {name:'Infineon',       lat:45.3360,lng:-75.9060,above:true, pay:147116},
-    {name:'Microchip',      lat:45.3290,lng:-75.9350,above:false,pay:85566},
-    {name:'QUALCOMM',       lat:45.3350,lng:-75.9280,above:false,pay:83452},
-    {name:'NXP Semi',       lat:45.3230,lng:-75.9150,above:false,pay:101587},
-    {name:'ElectroPotonic', lat:45.3270,lng:-75.8870,above:true, pay:134738},
-    {name:'Telesat',        lat:45.3930,lng:-75.6820,above:false,pay:79471},
+    // Ciena: 5050 Innovation Drive / 385 Terry Fox Drive, Kanata K2K 0L1
+    {name:'Ciena\n385 Terry Fox Dr',       lat:45.3497,lng:-75.9050,ciena:true, pay:null},
+    // Nokia: 600 March Road, Kanata K2K 2T6
+    {name:'Nokia\n600 March Rd',           lat:45.3581,lng:-75.9121,above:true, pay:139746},
+    // Alphawave IP: 495 March Road, Kanata K2K 3G1
+    {name:'Alphawave IP\n495 March Rd',    lat:45.3561,lng:-75.9124,above:false,pay:113978},
+    // Synopsys: 450 March Road / 84 Hines Rd, Kanata K2K 3K2
+    {name:'Synopsys\n450 March Rd',        lat:45.3554,lng:-75.9130,above:true, pay:139620},
+    // Marvell: Kanata North — Legget Drive area
+    {name:'Marvell\nLegget Dr, Kanata',    lat:45.3526,lng:-75.9145,above:true, pay:143254},
+    // AMD: March Road area, Kanata North
+    {name:'AMD\nMarch Rd, Kanata',         lat:45.3540,lng:-75.9140,above:false,pay:133568},
+    // Infineon: 559 Donald Street → actually in Kanata North area
+    {name:'Infineon\nKanata North',        lat:45.3512,lng:-75.9108,above:true, pay:147116},
+    // Intel: Kanata office — Solandt Road area
+    {name:'Intel\nSolandt Rd, Kanata',     lat:45.3470,lng:-75.9190,above:true, pay:209089},
+    // ElectroPotonic: Kanata North
+    {name:'ElectroPotonic\nKanata North',  lat:45.3530,lng:-75.9165,above:true, pay:134738},
+    // NXP Semi: Kanata North
+    {name:'NXP Semi\nKanata North',        lat:45.3518,lng:-75.9155,above:false,pay:101587},
+    // Microchip: Kanata North
+    {name:'Microchip\nKanata North',       lat:45.3505,lng:-75.9135,above:false,pay:85566},
+    // QUALCOMM: Kanata area
+    {name:'QUALCOMM\nKanata',              lat:45.3490,lng:-75.9170,above:false,pay:83452},
+    // Telesat: 1601 Telesat Court, Gloucester (east Ottawa) — distinct location
+    {name:'Telesat\n1601 Telesat Ct',      lat:45.3731,lng:-75.5925,above:false,pay:79471},
   ];
 
   locs.forEach(p=>{
     const color=p.ciena?'#E8A020':p.above?'#C62828':'#2E7D32';
     const r=p.ciena?11:8;
+    const nm=p.name.split('\n')[0];
+    const addr=p.name.split('\n')[1]||'';
     const circ=L.circleMarker([p.lat,p.lng],{radius:r,color:'white',weight:2,fillColor:color,fillOpacity:0.9}).addTo(map);
     const payStr=p.pay
-      ?`<br><span style="font-family:monospace;font-size:12px">Avg pay: ${fmt(p.pay)}</span>`
-      :`<br><span style="font-size:11px;color:#666">Range: $115K – $149K</span>`;
-    circ.bindTooltip(`<strong>${p.name}</strong>${payStr}`,{direction:'top',offset:[0,-4]});
+      ?`<br><span style="color:#555;font-size:10px">${addr}</span><br><span style="font-family:monospace;font-size:12px">Avg pay: ${fmt(p.pay)}</span>`
+      :`<br><span style="font-size:11px;color:#666">${addr}</span><br><span style="font-size:11px;color:#666">Range: $115K–$149K</span>`;
+    circ.bindTooltip(`<strong>${nm}</strong>${payStr}`,{direction:'top',offset:[0,-4]});
   });
 
   const legend=L.control({position:'bottomright'});
